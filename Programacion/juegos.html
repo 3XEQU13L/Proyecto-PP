@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Juegos - Minijuegos</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #e0f7e9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px;
+    }
+
+    h1 {
+      color: green;
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      margin-top: 50px;
+      color: #2d6a4f;
+    }
+
+    .botones-juegos, .botones-herramientas {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.3s;
+      min-width: 260px;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background-color: #45a049;
+      transform: scale(1.05);
+    }
+
+    .btn-editor {
+      background-color: #ffc107;
+      color: black;
+    }
+
+    .btn-editor:hover {
+      background-color: #e0a800;
+    }
+  </style>
+</head>
+<body>
+  <h1>Menú de Juegos</h1>
+
+  <h2>Minijuegos</h2>
+  <div class="botones-juegos">
+    <a class="btn" href="preguntas.html" target="_blank">Preguntas y Respuestas</a>
+    <a class="btn" href="memorias.html" target="_blank">Recuerda y compara</a>
+    <a class="btn" href="arbol.html" target="_blank">Dibuja tu arbol</a>
+    <a class="btn" href="hojas.html" target="_blank">Atrapa las hojas</a>
+    <a class="btn" href="globos.html" target="_blank">Explota y gana</a>
+  </div>
+  </div>
+</body>
+</html>

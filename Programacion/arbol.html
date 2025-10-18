@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dibuja tu arbol</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(#c8e6c9, #f1f8e9);
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      margin: 10px;
+    }
+
+    #toolbar {
+    margin: 10px;
+    display: flex;
+    align-items: center;
+    }
+
+    .color-btn {
+      width: 30px;
+      height: 30px;
+      border: 2px solid #333;
+      border-radius: 50%;
+      margin: 3px;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    #clear {
+    padding: 5px 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: #f44336;
+    color: white;
+    }
+
+    #canvas {
+      border: 2px solid #333;
+      border-radius: 10px;
+      background: white;
+      cursor: crosshair;
+    }
+
+    .volver {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #f44336;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    .volver:hover {
+      background-color: #2d6a4f;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 Dibuja tu Árbol 🌳</h1>
+  
+  <div id="toolbar">
+    <div class="color-btn" style="background:brown" onclick="setColor('brown')"></div>
+    <div class="color-btn" style="background:green" onclick="setColor('green')"></div>
+    <div class="color-btn" style="background:darkgreen" onclick="setColor('darkgreen')"></div>
+    <div class="color-btn" style="background:yellow" onclick="setColor('yellow')"></div>
+    <div class="color-btn" style="background:pink" onclick="setColor('pink')"></div>
+    <div class="color-btn" style="background:blue" onclick="setColor('blue')"></div>
+    <button id="clear" onclick="clearCanvas()">🧹 Limpiar</button>
+  </div>
+
+  <canvas id="canvas" width="500" height="400"></canvas>
+  <a href="juegos.html" class="volver">⬅ Volver al inicio</a>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    let drawing = false;
+    let color = "green";
+
+    function setColor(c) {
+      color = c;
+    }
+
+    function startDrawing(e) {
+      drawing = true;
+      draw(e);
+    }
+
+    function stopDrawing() {
+      drawing = false;
+      ctx.beginPath();
+    }
+
+    function draw(e) {
+      if (!drawing) return;
+      ctx.lineWidth = 8;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = color;
+
+      const rect = canvas.getBoundingClientRect();
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("mousemove", draw);
+  </script>
+</body>
+</html>

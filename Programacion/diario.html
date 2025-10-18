@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi Diario - Planeta Verde</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #fdfcdc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      color: #5a5a5a;
+      margin-bottom: 20px;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      max-width: 800px;
+      font-size: 16px;
+      padding: 15px;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      background-color: #fffdf4;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      height: 200px;
+      resize: none;
+    }
+
+    .botones {
+      margin-top: 10px;
+      margin-bottom: 30px;
+    }
+
+    button, .volver {
+      background-color: #ffb703;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    button:hover, .volver:hover {
+      background-color: #fb8500;
+    }
+
+    .carpeta {
+      background-color: #ffe066;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 10px;
+      width: 100%;
+      max-width: 600px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: bold;
+      position: relative;
+    }
+
+    .carpeta:hover {
+      background-color: #ffd43b;
+    }
+
+    .btn-borrar {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: red;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      display: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .carpeta:hover .btn-borrar {
+      display: flex;
+    }
+
+    .entrada-texto {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 600px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      white-space: pre-wrap;
+    }
+
+    .oculto {
+      display: none;
+    }
+
+    .titulo-entrada {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .volver {
+      margin-top: 20px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mi Diario de Aprendizaje</h1>
+
+  <div id="formulario">
+    <input type="text" id="titulo" placeholder="Titulo del texto (ej. fecha de hoy)">
+    <textarea id="diario" placeholder="Escribí aquí lo que aprendiste..."></textarea>
+    <div class="botones">
+      <button onclick="guardarEntrada()">💾 Guardar entrada</button>
+    </div>
+  </div>
+
+  <div id="lista-entradas"></div>
+
+  <div id="contenido-entrada" class="oculto">
+    <div class="entrada-texto">
+      <div class="titulo-entrada" id="titulo-mostrado"></div>
+      <div id="texto-mostrado"></div>
+    </div>
+    <a href="diario.html" class="volver">⬅ Volver al diario</a>
+    <a href="index.html" class="volver">🏠 Volver al inicio</a>
+  </div>
+
+  <script>
+    const listaEntradasDiv = document.getElementById("lista-entradas");
+    let entradas = JSON.parse(localStorage.getItem("diarioEntradas")) || [];
+
+    function guardarEntrada() {
+      const titulo = document.getElementById("titulo").value.trim();
+      const texto = document.getElementById("diario").value.trim();
+
+      if (titulo === "" || texto === "") {
+        alert("Completá el título y el contenido antes de guardar.");
+        return;
+      }
+
+      const nuevaEntrada = {
+        id: Date.now(),
+        titulo: titulo,
+        texto: texto
+      };
+
+      entradas.push(nuevaEntrada);
+      localStorage.setItem("diarioEntradas", JSON.stringify(entradas));
+
+      document.getElementById("titulo").value = "";
+      document.getElementById("diario").value = "";
+
+      mostrarEntradas();
+    }
+
+    function mostrarEntradas() {
+      listaEntradasDiv.innerHTML = "<h2>📁 Entradas guardadas</h2>";
+
+      entradas.forEach((entrada) => {
+        const div = document.createElement("div");
+        div.className = "carpeta";
+        div.textContent = "📄 " + entrada.titulo;
+        div.onclick = () => mostrarEntrada(entrada.id);
+
+        const btnBorrar = document.createElement("button");
+        btnBorrar.textContent = "✕";
+        btnBorrar.className = "btn-borrar";
+        btnBorrar.onclick = (event) => {
+          event.stopPropagation();
+          mostrarAlertaBorrado(entrada.id);
+        };
+
+        div.appendChild(btnBorrar);
+        listaEntradasDiv.appendChild(div);
+      });
+    }
+
+    function mostrarEntrada(id) {
+      const entrada = entradas.find(e => e.id === id);
+      if (!entrada) return;
+
+      document.getElementById("formulario").classList.add("oculto");
+      listaEntradasDiv.classList.add("oculto");
+      document.getElementById("contenido-entrada").classList.remove("oculto");
+
+      document.getElementById("titulo-mostrado").textContent = entrada.titulo;
+      document.getElementById("texto-mostrado").textContent = entrada.texto;
+    }
+
+    function mostrarAlertaBorrado(id) {
+      const confirmado = confirm("⚠️ ¿Deseás borrar esta entrada?");
+      if (confirmado) {
+        entradas = entradas.filter(e => e.id !== id);
+        localStorage.setItem("diarioEntradas", JSON.stringify(entradas));
+        mostrarEntradas();
+      }
+    }
+
+    mostrarEntradas();
+  </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Preguntas y Respuestas</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #d8f3dc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .contenedor {
+      background-color: rgba(255, 255, 255, 0.85);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      max-width: 600px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 32px;
+      color: #2d6a4f;
+      margin-bottom: 20px;
+    }
+
+    .opcion {
+      background-color: #74c69d;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      margin: 10px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-size: 18px;
+      width: 100%;
+    }
+
+    .opcion:hover {
+      background-color: #52b788;
+    }
+
+    .puntaje {
+      font-weight: bold;
+      font-size: 20px;
+      margin-top: 20px;
+      color: #1b4332;
+    }
+
+    .volver {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #40916c;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    .volver:hover {
+      background-color: #2d6a4f;
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <h1 id="pregunta">Cargando pregunta...</h1>
+    <div id="opciones"></div>
+    <div class="puntaje" id="puntaje"></div>
+    <a href="juegos.html" class="volver">⬅ Volver al inicio</a>
+  </div>
+
+  <script>
+    const preguntas = [
+      {
+        texto: "¿Dónde se deben tirar las botellas de plástico?",
+        opciones: ["En el tacho de reciclaje", "En el parque", "Al río"],
+        correcta: 0
+      },
+      {
+        texto: "¿Por qué es importante plantar árboles?",
+        opciones: [
+          "Porque sirven para jugar a las escondidas",
+          "Porque dan sombra, oxígeno y ayudan al planeta",
+          "Porque ocupan espacio en la vereda"
+        ],
+        correcta: 1
+      },
+      {
+        texto: "¿Qué podemos hacer para cuidar el agua?",
+        opciones: [
+          "Jugar con agua en la vereda",
+          "Lavar el auto con la manguera todo el día",
+          "Cerrar la canilla mientras nos lavamos los dientes"
+        ],
+        correcta: 2
+      },
+      {
+        texto: "¿Que hacemos con el papel viejo?",
+        opciones: [
+          "Tirarlas a la basura común",
+          "Usarlas de nuevo para dibujar o reciclarlas",
+          "Quemarlas en el patio"
+        ],
+        correcta: 1
+      },
+      {
+        texto: "¿Como podemos cuidar al planeta?",
+        opciones: [
+          "Dejar las luces prendidas todo el día",
+          "Separar la basura en casa para reciclar",
+          "Tirar pilas en cualquier tacho"
+        ],
+        correcta: 1
+      }
+    ];
+
+    let preguntasRestantes = [...preguntas];
+    let puntaje = 0;
+    let ronda = 0;
+
+    function mostrarPregunta() {
+      if (ronda >= preguntas.length || preguntasRestantes.length === 0) {
+        document.getElementById("pregunta").textContent = "¡Juego terminado!";
+        document.getElementById("opciones").innerHTML = "";
+        document.getElementById("puntaje").textContent = "Puntaje final: " + puntaje + " puntos.";
+        return;
+      }
+
+      ronda++;
+
+      const indice = Math.floor(Math.random() * preguntasRestantes.length);
+      const preguntaActual = preguntasRestantes[indice];
+      preguntasRestantes.splice(indice, 1); // quitar pregunta usada
+
+      document.getElementById("pregunta").textContent = preguntaActual.texto;
+      const opcionesDiv = document.getElementById("opciones");
+      opcionesDiv.innerHTML = "";
+
+      preguntaActual.opciones.forEach((opcion, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = opcion;
+        btn.className = "opcion";
+        btn.onclick = () => {
+          if (i === preguntaActual.correcta) {
+            puntaje += 10;
+          }
+          mostrarPregunta();
+        };
+        opcionesDiv.appendChild(btn);
+      });
+    }
+
+    mostrarPregunta();
+  </script>
+  <div class="botones-herramientas">
+</body>
+</html>

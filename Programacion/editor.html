@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editor de Preguntas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f7f4;
+      padding: 20px;
+    }
+    h1 {
+      color: #2d6a4f;
+    }
+    .pregunta {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+    }
+    input, select {
+      margin: 5px 0;
+      padding: 8px;
+      width: 100%;
+    }
+    button {
+      padding: 10px 15px;
+      margin-top: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .volver {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 8px 15px;
+      background-color: #2d6a4f;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Editor de Preguntas</h1>
+  <div id="lista-preguntas"></div>
+  <button onclick="guardarCambios()">Guardar Cambios</button>
+  <a href="juegos.html" class="volver">⬅ Volver</a>
+
+  <script>
+    const preguntasPorDefecto = [
+      { texto: "¿Dónde se deben tirar las botellas de plástico?", opciones: ["En el tacho de reciclaje", "En el parque", "Al río"], correcta: 0 },
+      { texto: "¿Por qué es importante plantar árboles?", opciones: ["Porque sirven para jugar a las escondidas", "Porque dan sombra, oxígeno y ayudan al planeta", "Porque ocupan espacio en la vereda"], correcta: 1 },
+      { texto: "¿Qué podemos hacer para cuidar el agua?", opciones: ["Jugar con agua en la vereda", "Lavar el auto con la manguera todo el día", "Cerrar la canilla mientras nos lavamos los dientes"], correcta: 2 },
+      { texto: "¿Qué hacemos con el papel viejo?", opciones: ["Tirarlas a la basura común", "Usarlas de nuevo para dibujar o reciclarlas", "Quemarlas en el patio"], correcta: 1 },
+      { texto: "¿Cómo podemos cuidar al planeta?", opciones: ["Dejar las luces prendidas todo el día", "Separar la basura en casa para reciclar", "Tirar pilas en cualquier tacho"], correcta: 1 }
+    ];
+
+    let preguntas = JSON.parse(localStorage.getItem("preguntasPersonalizadas")) || preguntasPorDefecto;
+
+    const lista = document.getElementById("lista-preguntas");
+
+    preguntas.forEach((p, index) => {
+      const div = document.createElement("div");
+      div.className = "pregunta";
+      div.innerHTML = `
+        <label>Pregunta:</label>
+        <input type="text" value="${p.texto}" id="pregunta-${index}">
+        <label>Opción 1:</label>
+        <input type="text" value="${p.opciones[0]}" id="opcion-${index}-0">
+        <label>Opción 2:</label>
+        <input type="text" value="${p.opciones[1]}" id="opcion-${index}-1">
+        <label>Opción 3:</label>
+        <input type="text" value="${p.opciones[2]}" id="opcion-${index}-2">
+        <label>Respuesta correcta:</label>
+        <select id="correcta-${index}">
+          <option value="0" ${p.correcta === 0 ? "selected" : ""}>Opción 1</option>
+          <option value="1" ${p.correcta === 1 ? "selected" : ""}>Opción 2</option>
+          <option value="2" ${p.correcta === 2 ? "selected" : ""}>Opción 3</option>
+        </select>
+      `;
+      lista.appendChild(div);
+    });
+
+    function guardarCambios() {
+      const nuevasPreguntas = preguntas.map((_, index) => ({
+        texto: document.getElementById(`pregunta-${index}`).value,
+        opciones: [
+          document.getElementById(`opcion-${index}-0`).value,
+          document.getElementById(`opcion-${index}-1`).value,
+          document.getElementById(`opcion-${index}-2`).value
+        ],
+        correcta: parseInt(document.getElementById(`correcta-${index}`).value)
+      }));
+
+      localStorage.setItem("preguntasPersonalizadas", JSON.stringify(nuevasPreguntas));
+      alert("Preguntas guardadas correctamente ✅");
+    }
+  </script>
+</body>
+</html>

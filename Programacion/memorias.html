@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Memorias</title>
+  <style>
+    body {
+      font-family:sans-serif;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+      background:linear-gradient(#e0f7fa,#f1f8e9);
+    }
+
+    h1 {
+      margin-bottom:10px;
+    }
+
+    #grid { 
+      display:grid;
+      grid-template-columns:repeat(3,100px);
+      gap:12px; 
+    }
+
+    .card { 
+      width:100px;
+      height:100px; 
+      font-size:40px; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center; 
+      background:#fff; 
+      border-radius:10px; 
+      cursor:pointer; 
+      transition:background 0.3s; 
+    }
+
+    .revealed {
+      background:#d0e8b4; 
+    }
+
+    .matched { 
+      background:#8cd58f; 
+      cursor:default; 
+    }
+
+    #pairs { 
+      margin-top:15px;
+      font-size:18px; 
+    }
+    
+    #win { 
+      margin-top:10px; 
+      font-size:20px; 
+      font-weight:bold; 
+      color:#2e7d32; 
+    }
+    
+    .volver {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #05a42d;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    .volver:hover {
+      background-color: #05a42d;
+    }
+  </style>
+</head>
+<body>
+  <h1>Memoria</h1>
+  <div id="grid"></div>
+  <div id="pairs">Pares encontrados: 0</div>
+  <div id="win"></div>
+  <button onclick="setup()">🔄 Reiniciar</button>
+  <a href="juegos.html" class="volver">⬅ Volver al inicio</a>
+
+<script>
+const EMOJIS=['🌍','🌸','☁','🦋','🌳','🌞'];
+let first=null, lock=false, pairs=0, totalPairs=3;
+
+function shuffle(array){
+  for(let i=array.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [array[i],array[j]]=[array[j],array[i]];
+  }
+  return array;
+}
+
+function setup(){
+  const grid=document.getElementById("grid");
+  const win=document.getElementById("win");
+  grid.innerHTML=""; 
+  pairs=0; 
+  document.getElementById("pairs").textContent="Pares encontrados: 0";
+  win.textContent="";
+  first=null; 
+  lock=false;
+
+  const chosen=shuffle([...EMOJIS]).slice(0,totalPairs);
+  const deck=shuffle([...chosen,...chosen]);
+
+  deck.forEach(e=>{
+    const el=document.createElement("div");
+    el.className="card"; 
+    el.textContent="❓"; 
+    el.dataset.emoji=e;
+    el.onclick=()=>flip(el);
+    grid.appendChild(el);
+  });
+}
+
+function flip(el){
+  if(lock||el.classList.contains("revealed")||el.classList.contains("matched")) return;
+
+  el.textContent=el.dataset.emoji; 
+  el.classList.add("revealed");
+
+  if(!first){ 
+    first=el; 
+    return;
+  }
+
+  lock=true;
+  if(first.dataset.emoji===el.dataset.emoji){
+    setTimeout(()=>{
+      first.classList.add("matched"); 
+      el.classList.add("matched"); 
+      pairs++; 
+      document.getElementById("pairs").textContent="Pares encontrados: "+pairs; 
+      if(pairs===totalPairs){
+        document.getElementById("win").textContent="🎉 ¡Ganaste! 🎉";
+      }
+      first=null; 
+      lock=false; 
+    },300);
+  } else {
+    setTimeout(()=>{
+      first.textContent="❓"; 
+      el.textContent="❓"; 
+      first.classList.remove("revealed"); 
+      el.classList.remove("revealed"); 
+      first=null; 
+      lock=false; 
+    },700);
+  }
+}
+
+setup();
+</script>
+</body>
+</html>

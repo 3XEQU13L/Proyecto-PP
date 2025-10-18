@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Explota los Globos</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(#b3e5fc, #e3f2fd);
+      font-family: sans-serif;
+    }
+
+    #area {
+      position: relative;
+      width: 80%;
+      height: 80%;
+      background: #d0f0ff;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .balloon {
+      position:absolute;
+      width:60px;
+      height:80px;
+      border-radius:50% 50% 45% 45%/55% 55% 45% 45%;
+      background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.9), rgba(255,255,255,.1) 40%), var(--color,#ff7675);
+      box-shadow: inset -8px -12px 0 rgba(0,0,0,.08);
+      cursor:pointer;
+      animation: floatUp linear var(--speed,4s);
+    }
+
+    .balloon::after {
+      content: "";
+      position:absolute;
+      left:50%;
+      bottom:-18px;
+      transform:translateX(-50%);
+      width:2px;
+      height:28px;
+      background:rgba(0,0,0,.2);
+    }
+
+    @keyframes floatUp {
+      from { bottom: 0; }
+      to { bottom: 80%; }
+    }
+
+    .pop { 
+      animation: pop .25s forwards; 
+    }
+
+    @keyframes pop {
+      to { transform:scale(1.6); opacity:0; }
+    }
+
+    #score {
+      position:absolute;
+      top:10px;
+      left:10px;
+      font-size:20px;
+      font-weight:bold;
+    }
+
+    #btns {
+      position:absolute;
+      bottom:10px;
+      left:50%;
+      transform:translateX(-50%);
+    }
+
+    button {
+      padding:10px 20px;
+      margin:0 5px;
+      font-size:16px;
+      cursor:pointer;
+    }
+
+    #message {
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%, -50%);
+      font-size:28px;
+      font-weight:bold;
+      color:#2d3436;
+      display:none;
+    }
+
+    #time {
+    position:absolute; top:10px; right:10px;
+    font-size:20px; font-weight:bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="area">
+    <div id="score">Puntos: 0</div>
+    <div id="time">Tiempo: <span id="timer">60</span>s</div>
+    <div id="btns">
+      <button id="start">▶ Empezar</button>
+      <button id="stop">⏹ Parar</button>
+    </div>
+    <div id="message">¡Fin del juego!</div>
+  </div>
+
+  <script>
+    const area = document.getElementById("area");
+    const scoreEl = document.getElementById("score");
+    const timerEl = document.getElementById("timer");
+    const messageEl = document.getElementById("message");
+
+    let score = 0, interval = null, timerInterval = null, time = 60, running = false;
+    const colors = ['#ff7675','#74b9ff','#55efc4','#ffeaa7','#a29bfe','#fab1a0'];
+
+    function spawn() {
+      const b = document.createElement("div");
+      b.className = "balloon";
+      b.style.left = Math.random() * (area.clientWidth - 60) + "px";
+      b.style.bottom = "0px";
+      b.style.setProperty("--color", colors[Math.floor(Math.random() * colors.length)]);
+      b.style.setProperty("--speed", (4 + Math.random() * 5) + "s");
+      b.addEventListener("click", () => popBalloon(b));
+      b.addEventListener("animationend", () => b.remove());
+      area.appendChild(b);
+    }
+
+    function popBalloon(b) {
+      if (!running) return;
+      score++;
+      scoreEl.textContent = `Puntos: ${score}`;
+      b.classList.add("pop");
+      b.addEventListener("animationend", () => b.remove());
+    }
+
+    function startTimer() {
+      time = 60;
+      timerEl.textContent = time;
+      timerInterval = setInterval(() => {
+        time--;
+        timerEl.textContent = time;
+        if (time <= 0) {
+          stopGame();
+          messageEl.style.display = "block";
+        }
+      }, 1000);
+    }
+
+    function stopGame() {
+      running = false;
+      clearInterval(interval);
+      clearInterval(timerInterval);
+      document.querySelectorAll(".balloon").forEach(b => b.remove());
+    }
+
+    document.getElementById("start").onclick = () => {
+      if (running) return;
+      running = true;
+      score = 0;
+      time = 0;
+      messageEl.style.display = "none";
+      scoreEl.innerHTML = `Puntos: 0 | Tiempo: <span id="timer">60</span>s`;
+      interval = setInterval(spawn, 500);
+      startTimer();
+    };
+
+    document.getElementById("stop").onclick = () => {
+      stopGame();
+      messageEl.style.display = "block";
+    };
+  </script>
+</body>
+</html>
