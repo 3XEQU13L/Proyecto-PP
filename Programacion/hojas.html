@@ -241,7 +241,6 @@
           hoja.y += hoja.velocidad;
           hoja.element.style.top = hoja.y + 'px';
           
-          // Detectar colisión con canasta
           if (hoja.y > 440 && hoja.y < 460 && 
               hoja.x > canastaPosicion - 20 && hoja.x < canastaPosicion + 60) {
             hoja.activa = false;
